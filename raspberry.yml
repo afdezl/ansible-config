@@ -1,0 +1,6 @@
+---
+
+- hosts: raspberry
+  connection: ssh
+  roles:
+    - common
