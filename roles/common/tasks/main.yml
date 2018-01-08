@@ -1,8 +1,26 @@
 # Main configuration file
 
+- name: ensure aptitude is present
+  become: true
+  apt: pkg=aptitude state=present
+
+
+- name: add repositories
+  become: true
+  apt_repository: repo='ppa:git-core/ppa' state=present update_cache=yes
+
+
 - name: install packages
   become: true
-  apt: name="{{ item }}" state=present
+  action: >
+      {{ ansible_pkg_mgr }} name={{ item }} state=present
   with_items:
+    - aptitude
     - curl
     - make
+    - vim
+    - tmux
+    - git
+    - htop
+    - python-dev
+    - xclip

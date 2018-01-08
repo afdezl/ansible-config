@@ -4,3 +4,4 @@
   connection: ssh
   roles:
     - common
+    - rpi

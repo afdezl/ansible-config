@@ -1,0 +1,19 @@
+# Installation of RPi specific dev libraries
+
+- name: install dev packages
+  become: true
+  action: >
+    {{ ansible_pkg_mgr  }} name={{ item }} state=present
+  with_items:
+    - python
+    - python3
+    - libbluetooth-dev
+    - python-dev
+
+
+- name: install python packages
+  become: true
+  pip: name={{ item }} state=present
+  with_items:
+    - virtualenv
+    - ipython
