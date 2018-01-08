@@ -1,4 +1,4 @@
-# Main configuration file
+# Laptop configuration file
 
 - name: add apt-keys
   become: true
@@ -17,3 +17,4 @@
   with_items:
     - virtualbox
     - vagrant
+    - sublime-text
