@@ -1,7 +1,7 @@
 .PHONY: ${TARGETS}
 
-local:
-	ansible-playbook -K laptop.yml
+laptop:
+	ansible-playbook -K laptop.yml -v
 
 raspberry:
-	ansible-playbook raspberry.yml
+	ansible-playbook raspberry.yml -v

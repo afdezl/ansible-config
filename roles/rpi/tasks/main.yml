@@ -6,9 +6,13 @@
     {{ ansible_pkg_mgr  }} name={{ item }} state=present
   with_items:
     - python
+    - python-pip
     - python3
     - libbluetooth-dev
     - python-dev
+    - libnss-mdns
+    - software-properties-common
+
 
 
 - name: install python packages

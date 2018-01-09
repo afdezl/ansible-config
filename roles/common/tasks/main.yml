@@ -18,9 +18,12 @@
     - aptitude
     - curl
     - make
+    - tree
     - vim
     - tmux
     - git
     - htop
     - python-dev
     - xclip
+    - jq
+    - nmap

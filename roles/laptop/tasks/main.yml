@@ -7,10 +7,16 @@
 
 - name: add repositories
   become: true
-  apt_repository: repo='deb https://download.sublimetext.com/ apt/stable/' state=present update_cache=yes
+  apt_repository: repo={{ item }} state=present update_cache=yes
+  with_items:
+    - 'deb https://download.sublimetext.com/ apt/stable/' 
+    - 'deb http://repository.spotify.com stable non-free'
+    - 'ppa:phoerious/keepassxc'
+    - 'ppa:octave/stable'
+    - 'deb http://archive.canonical.com/ {{ ansible_distribution_release }} partner'
 
 
-- name: install packages
+- name: install apt packages
   become: true
   action: >
       {{ ansible_pkg_mgr }} name={{ item }} state=present update_cache=yes
@@ -18,3 +24,25 @@
     - virtualbox
     - vagrant
     - sublime-text
+    - spotify-client
+    - hugo
+    - whois
+    - keepassxc
+    - network-manager-openvpn
+    - smem
+    - inkscape
+    - postgresql
+    - postgresql-contrib
+    - postgresql-client
+    - ubuntu-restricted-extras
+    - build-essential
+    - nodejs
+    - npm
+    - octave
+
+
+- name: Remove dependencies that are no longer required
+  become: true
+  apt:
+    autoremove: yes
+
