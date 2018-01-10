@@ -1,6 +1,6 @@
 # Laptop configuration file
 
-- name: add apt-keys
+- name: Add apt-keys
   become: true
   apt_key: url={{ item }} state=present
   with_items:
@@ -8,7 +8,7 @@
     - 'https://repo.skype.com/data/SKYPE-GPG-KEY'
 
 
-- name: add repositories
+- name: Add repositories
   become: true
   apt_repository: repo={{ item }} state=present update_cache=yes
   with_items:
@@ -20,7 +20,7 @@
     - 'deb [arch=amd64] https://repo.skype.com/deb unstable main'
 
 
-- name: install apt packages
+- name: Install apt packages
   become: true
   action: >
       {{ ansible_pkg_mgr }} name={{ item }} state=present update_cache=yes
@@ -51,3 +51,42 @@
   apt:
     autoremove: yes
 
+
+- name: Download dotfiles
+  git:
+    repo: https://github.com/afdezl/dotfiles.git
+    dest: {{ ansible_env.HOME }}/projects/dotfiles  
+
+
+- stat:
+    path={{ ansible_env.HOME }}/.zshrc
+  register: zshrc
+
+
+- stat:
+    path={{ ansible_env.HOME }}/.zshrc.d
+  register: zshrcd
+
+
+- name: Create required directories in $HOME
+  file: path={{ ansible_env.HOME }}/{{ item }} state=directory
+  with_items:
+    - "projects"
+    - ".zshrc.d"
+  when:
+    - ansible_user_shell == "/bin/zsh"
+    - zshrcd.stat.islnk is defined and zshrcd.stat.islnk == False
+
+
+- name: Remove default zshrc configuration
+  file: path={{ ansible_env.HOME }}/.zshrc state=absent
+  when:
+    - ansible_user_shell == "/bin/zsh"
+    - zshrc.stat.islnk is defined and zshrc.stat.islnk == False
+
+
+- name: Create ZSH config symlinks
+  file: src={{ ansible_env.HOME }}/projects/dotfiles/{{ item }} dest={{ ansible_env.HOME }}/{{ item }} state=link force=yes
+  with_items:
+    - '.zshrc'
+    - '.zshrc.d'
