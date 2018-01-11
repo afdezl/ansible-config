@@ -1,16 +1,16 @@
 # Main configuration file
 
-- name: ensure aptitude is present
+- name: Ensure aptitude is present
   become: true
   apt: pkg=aptitude state=present
 
 
-- name: add repositories
+- name: Add repositories
   become: true
   apt_repository: repo='ppa:git-core/ppa' state=present update_cache=yes
 
 
-- name: install packages
+- name: Install packages
   become: true
   action: >
       {{ ansible_pkg_mgr }} name={{ item }} state=present

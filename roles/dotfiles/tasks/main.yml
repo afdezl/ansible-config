@@ -1,0 +1,6 @@
+# Download personal configuration dotfiles
+
+- name: Download dotfiles
+  git:
+    repo: https://github.com/afdezl/dotfiles.git
+    dest: "{{ ansible_env.HOME }}/projects/dotfiles"  

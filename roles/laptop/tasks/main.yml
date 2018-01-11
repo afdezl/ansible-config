@@ -52,41 +52,11 @@
     autoremove: yes
 
 
-- name: Download dotfiles
-  git:
-    repo: https://github.com/afdezl/dotfiles.git
-    dest: {{ ansible_env.HOME }}/projects/dotfiles  
-
-
-- stat:
-    path={{ ansible_env.HOME }}/.zshrc
-  register: zshrc
-
-
-- stat:
-    path={{ ansible_env.HOME }}/.zshrc.d
-  register: zshrcd
-
-
 - name: Create required directories in $HOME
   file: path={{ ansible_env.HOME }}/{{ item }} state=directory
   with_items:
     - "projects"
-    - ".zshrc.d"
-  when:
-    - ansible_user_shell == "/bin/zsh"
-    - zshrcd.stat.islnk is defined and zshrcd.stat.islnk == False
 
 
-- name: Remove default zshrc configuration
-  file: path={{ ansible_env.HOME }}/.zshrc state=absent
-  when:
-    - ansible_user_shell == "/bin/zsh"
-    - zshrc.stat.islnk is defined and zshrc.stat.islnk == False
 
 
-- name: Create ZSH config symlinks
-  file: src={{ ansible_env.HOME }}/projects/dotfiles/{{ item }} dest={{ ansible_env.HOME }}/{{ item }} state=link force=yes
-  with_items:
-    - '.zshrc'
-    - '.zshrc.d'

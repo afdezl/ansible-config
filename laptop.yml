@@ -5,4 +5,6 @@
   roles:
     - common
     - laptop
+    - { role: vaulttec.zsh, zsh_ohmy_theme: robbyrussell, zsh_ohmy_plugins: [git] }
+    - zsh-config
 

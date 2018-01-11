@@ -1,6 +1,6 @@
 # Installation of RPi specific dev libraries
 
-- name: install dev packages
+- name: Install dev packages
   become: true
   action: >
     {{ ansible_pkg_mgr  }} name={{ item }} state=present
@@ -14,10 +14,10 @@
     - software-properties-common
 
 
-
-- name: install python packages
+- name: Install python packages
   become: true
   pip: name={{ item }} state=present
   with_items:
     - virtualenv
     - ipython
+    - awscli
