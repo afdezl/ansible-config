@@ -1,14 +1,6 @@
+---
+
 # ZSH config
-
-- stat:
-    path={{ ansible_env.HOME }}/.zshrc
-  register: zshrc
-
-
-- stat:
-    path={{ ansible_env.HOME }}/.zshrc.d
-  register: zshrcd
-
 
 - include_role:
     name: vaulttec.zsh
@@ -16,11 +8,3 @@
     zsh_ohmy_theme: robbyrussell
     zsh_ohmy_plugins: [git]
   when: ansible_user_shell.split('/')[-1] != 'zsh'
-
-
-- name: Create ZSH config symlinks
-  file: src={{ ansible_env.HOME }}/projects/dotfiles/{{ item }} dest={{ ansible_env.HOME }}/{{ item }} state=link force=yes
-  with_items:
-    - '.zshrc'
-    - '.zshrc.d'
-  when: ansible_user_shell.split('/')[-1] == 'zsh'

@@ -1,30 +1,37 @@
-# Main configuration file
+---
 
-- name: Ensure aptitude is present
+# Main configuration file for cmmon packages and config
+
+- name: Ensure aptitude and apt properties are installed
   become: true
-  apt: pkg=aptitude state=present
+  apt: pkg={{ item }} state=present update_cache=yes
+  with_items:
+    - aptitude
+    - apt-transport-https
+    - software-properties-common
 
 
 - name: Add repositories
   become: true
   apt_repository: repo='ppa:git-core/ppa' state=present update_cache=yes
+  when: ansible_distribution_release != "stretch"
 
 
 - name: Install packages
   become: true
-  action: >
-      {{ ansible_pkg_mgr }} name={{ item }} state=present
+  apt: pkg={{ item }} state=present
   with_items:
-    - apt-transport-https
-    - aptitude
     - curl
     - make
     - tree
     - vim
     - tmux
     - git
+    - git-core
     - htop
-    - python-dev
+    - python
+    - python3
+    - python-pip
     - xclip
     - jq
     - nmap

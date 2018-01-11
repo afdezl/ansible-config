@@ -1,6 +1,17 @@
+---
+
 # Download personal configuration dotfiles
 
 - name: Download dotfiles
   git:
     repo: https://github.com/afdezl/dotfiles.git
-    dest: "{{ ansible_env.HOME }}/projects/dotfiles"  
+    dest: "{{ ansible_env.HOME }}/dotfiles"  
+
+
+- name: Create .rc config symlinks
+  file: src={{ ansible_env.HOME }}/dotfiles/{{ item }} dest={{ ansible_env.HOME }}/{{ item }} state=link force=yes
+  with_items:
+    - '.bashrc'
+    - '.zshrc'
+    - '.shrc.d'
+

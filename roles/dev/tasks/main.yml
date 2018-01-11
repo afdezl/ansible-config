@@ -2,16 +2,13 @@
 
 - name: Install dev packages
   become: true
-  action: >
-    {{ ansible_pkg_mgr  }} name={{ item }} state=present
+  apt: pkg={{ item }} state=present
   with_items:
-    - python
-    - python-pip
-    - python3
-    - libbluetooth-dev
     - python-dev
+    - libbluetooth-dev
     - libnss-mdns
-    - software-properties-common
+    - nodejs
+    - npm
 
 
 - name: Install python packages
@@ -19,5 +16,7 @@
   pip: name={{ item }} state=present
   with_items:
     - virtualenv
+    - virtualenvwrapper
     - ipython
     - awscli
+    - PyYaml

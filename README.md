@@ -13,7 +13,7 @@ Ansible can be installed as follows:
 $ make install 
 ```
 
-The repo contains both an `ansible.cfg` and `hosts` file that can be used insted of the default files in `/etc/ansible/`.
+The repo contains both an `ansible.cfg` and `hosts` file that can be used instead of the default files in `/etc/ansible/`.
 
 These can be replaced by symlinking them.
 

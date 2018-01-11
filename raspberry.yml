@@ -4,6 +4,5 @@
   connection: ssh
   roles:
     - common
-    - rpi
+    - dev
     - dotfiles
-    - zsh-config
