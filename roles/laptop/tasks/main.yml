@@ -53,7 +53,12 @@
 
 
 - name: Create required directories in $HOME
-  file: path={{ ansible_env.HOME }}/{{ item }} state=directory
+  file:
+    path: "{{ ansible_env.HOME }}/{{ item }}"
+    state: directory
+    group: "{{ ansible_ssh_user|default(lookup('env', 'USER'))  }}"
+    owner: "{{ ansible_ssh_user|default(lookup('env', 'USER'))  }}"
+    mode: 0700
   with_items:
     - "projects"
 

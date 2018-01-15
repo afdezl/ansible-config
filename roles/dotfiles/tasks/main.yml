@@ -5,13 +5,22 @@
 - name: Download dotfiles
   git:
     repo: https://github.com/afdezl/dotfiles.git
-    dest: "{{ ansible_env.HOME }}/dotfiles"  
+    dest: "/home/{{ ansible_ssh_user|default(lookup('env', 'USER')) }}/dotfiles"  
 
 
 - name: Create .rc config symlinks
-  file: src={{ ansible_env.HOME }}/dotfiles/{{ item }} dest={{ ansible_env.HOME }}/{{ item }} state=link force=yes
+  file:
+    src: "/home/{{ ansible_ssh_user|default(lookup('env', 'USER')) }}/dotfiles/{{ item }}"
+    dest: "/home/{{ ansible_ssh_user|default(lookup('env', 'USER')) }}/{{ item }}"
+    state: link
+    force: yes
+    group: "{{ ansible_ssh_user|default(lookup('env', 'USER')) }}" 
+    owner: "{{ ansible_ssh_user|default(lookup('env', 'USER')) }}"
+    mode: 0700
+  
   with_items:
-    - '.bashrc'
-    - '.zshrc'
-    - '.shrc.d'
+    - ".bashrc"
+    - ".zshrc"
+    - ".shrc.d"
+
 

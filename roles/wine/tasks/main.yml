@@ -1,0 +1,37 @@
+---
+
+# Installs wine
+
+- name: Check enabled architectures
+  shell: dpkg --print-foreign-architectures
+  register: dpkg_enabled_architectures
+  changed_when: ('i386' not in dpkg_enabled_architectures.stdout_lines)
+
+
+- name: Enable i386 architecture
+  shell: dpkg --add-architecture i386
+  when: ('i386' not in dpkg_enabled_architectures.stdout_lines)
+
+
+- name: Add wine APT release key
+  become: true
+  apt_key: 
+    url: 'https://dl.winehq.org/wine-builds/Release.key'
+    state: present
+
+
+- name: Add wine repository
+  become: true
+  apt_repository:
+    repo: 'deb https://dl.winehq.org/wine-builds/ubuntu/ {{ ansible_distribution_release }} main'
+    state: present
+    update_cache: yes
+
+
+- name: Install wine
+  become: true
+  apt:
+    pkg: winehq-stable
+    state: latest
+    install_recommends: yes
+
