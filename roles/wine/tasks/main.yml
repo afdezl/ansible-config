@@ -35,3 +35,10 @@
     state: latest
     install_recommends: yes
 
+
+- name: Install wine extensions
+  apt:
+    pkg: "{{ item }}"
+    state: latest
+  with_items:
+    - wine-mono
