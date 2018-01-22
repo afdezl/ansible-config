@@ -1,0 +1,50 @@
+---
+
+
+- include_role:
+    name: dotfiles
+
+
+- name: Install Vim
+  become: true
+  apt:
+    package: "{{ item.name }}"
+    state: "{{ item.state }}"
+    update_cache: yes
+  with_items:
+    - { name: "vim-tiny", state: "absent" }
+    - { name: "vim", state: "present" }
+
+
+- name: Create Vim and Vundle directory
+  become: true
+  file:
+    path: "/home/{{ user }}/.vim/bundle"
+    state: directory
+    group: "{{ user }}"
+    owner: "{{ user }}"
+    mode: 0700
+
+
+- name: Download Vundle
+  git:
+    repo: https://github.com/gmarik/Vundle.vim.git
+    dest: "/home/{{ user }}/.vim/bundle/Vundle.vim"
+
+
+- name: Remove existing configuration
+  become: true
+  file:
+    path: "/home/{{ user }}/.vimrc"
+    state: absent
+
+
+- name: Create vimrc config symlinks
+  file:
+    src: "/home/{{ user }}/dotfiles/vimrc"
+    dest: "/home/{{ user }}/.vim/vimrc"
+    state: link
+    force: yes
+    group: "{{ user }}" 
+    owner: "{{ user }}"
+    mode: 0700

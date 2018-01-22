@@ -2,6 +2,10 @@
 
 # Laptop configuration file
 
+- include_role:
+    name: dotfiles
+
+
 - name: Add apt-keys
   become: true
   apt_key: url={{ item }} state=present
@@ -54,13 +58,27 @@
 
 - name: Create required directories in $HOME
   file:
-    path: "{{ ansible_env.HOME }}/{{ item }}"
+    path: "/home/{{ user }}/{{ item }}"
     state: directory
-    group: "{{ ansible_ssh_user|default(lookup('env', 'USER'))  }}"
-    owner: "{{ ansible_ssh_user|default(lookup('env', 'USER'))  }}"
+    group: "{{ user }}"
+    owner: "{{ user }}"
     mode: 0700
   with_items:
     - "projects"
+
+
+- name: Create .bashrc config symlinks
+  file:
+    src: "/home/{{ user }}/dotfiles/{{ item }}"
+    dest: "/home/{{ user }}/{{ item }}"
+    state: link
+    force: yes
+    group: "{{ user }}" 
+    owner: "{{ user }}"
+    mode: 0700
+  with_items:
+    - ".bashrc"
+    - ".shrc.d"
 
 
 
