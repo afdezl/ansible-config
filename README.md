@@ -44,7 +44,29 @@ Mount the bucket as follows:
 
 ```bash
 sudo mkdir -p /s3/<local_name>
-sudo s3fs -o allow_other <s3_bucket_name> <local_name> 
+sudo s3fs -o allow_other <s3_bucket_name> /s3/<local_name>
 ```
 
-After this, only root will be able to write to it. This can be overridden.
+After this, only root will be able to write to it. This can be overridden in the `/etc/fuse.conf`, uncomment `user_allow_other`.
+
+After this the drive must be remounted:
+
+```bash
+sudo umount /s3/<local_name>
+sudo s3fs -o allow_other <s3_bucket_name> /s3/<local_name>
+```
+
+[OPTIONALLY]
+**NOTE: Unmount the drive before proceeding.**
+
+Append the following line to  `/etc/fstab` for mounting on boot.
+
+```bash
+s3fs#<s3_bucket_name> /s3/<local_name> fuse retries=5,allow_other,url=https://s3.amazonaws.com 0 0
+```
+
+And remount the drive:
+
+```bash
+sudo mount /s3/<local_name>
+```

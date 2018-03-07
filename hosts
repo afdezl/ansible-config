@@ -46,4 +46,4 @@
 127.0.0.1
 
 [raspberry]
-192.168.1.167 ansible_ssh_user=pi
+192.168.1.5 ansible_ssh_user=pi

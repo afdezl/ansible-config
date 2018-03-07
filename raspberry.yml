@@ -6,3 +6,4 @@
     - common
     - dev
     - dotfiles
+    - s3fs
