@@ -1,0 +1,30 @@
+---
+
+- name: Add neovim repository
+  become: true
+  apt_repository:
+    repo: ppa:neovim-ppa/stable
+    state: present
+    update_cache: yes
+
+
+- name: Install neovim
+  apt:
+    pkg: neovim
+    state: present
+
+
+- name: Create neovim/vim config
+  copy:
+    content: ""
+    dest: ~/.config/nvim/init.vim
+    force: no
+    mode: "u=rw,g=r,o=r"
+
+
+- name: Add NVim config
+  lineinfile:
+    dest: ~/.config/nvim/init.vim
+    line: set guicursor=
+    state: present
+    create: yes

@@ -42,7 +42,7 @@
 
 ## db-[99:101]-node.example.com
 
-[laptop]
+[localhost]
 127.0.0.1
 
 [raspberry]

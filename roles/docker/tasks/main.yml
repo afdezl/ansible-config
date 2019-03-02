@@ -9,7 +9,7 @@
   with_items:
     - apt-transport-https
     - ca-certificates
-    - software-properties-common
+    - software-properties-essential
 
 - name: Add GPG key
   become: true

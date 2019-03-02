@@ -3,10 +3,8 @@
 - hosts: localhost
   connection: local
   roles:
-    - common
+    - essential
+    - python3.6
+    - neovim
+    - keepassxc
     - laptop
-    - zsh-config
-    - wine
-    - vim
-    - docker
-

@@ -1,56 +1,29 @@
 ---
 
-# Laptop configuration file
-
 - include_role:
     name: dotfiles
-
-
-- name: Add apt-keys
-  become: true
-  apt_key: url={{ item }} state=present
-  with_items:
-    - 'https://download.sublimetext.com/sublimehq-pub.gpg'
-    - 'https://repo.skype.com/data/SKYPE-GPG-KEY'
 
 
 - name: Add repositories
   become: true
   apt_repository: repo={{ item }} state=present update_cache=yes
   with_items:
-    - 'deb https://download.sublimetext.com/ apt/stable/' 
-    - 'deb http://repository.spotify.com stable non-free'
-    - 'ppa:phoerious/keepassxc'
     - 'ppa:octave/stable'
-    - 'deb http://archive.canonical.com/ {{ ansible_distribution_release }} partner'
-    - 'deb [arch=amd64] https://repo.skype.com/deb unstable main'
 
 
 - name: Install apt packages
   become: true
-  action: >
-      {{ ansible_pkg_mgr }} name={{ item }} state=present update_cache=yes
-  with_items:
-    - virtualbox
-    - vagrant
-    - sublime-text
-    - spotify-client
-    - hugo
-    - whois
-    - keepassxc
-    - network-manager-openvpn
-    - smem
-    - inkscape
-    - postgresql
-    - postgresql-contrib
-    - postgresql-client
-    - ubuntu-restricted-extras
-    - build-essential
-    - octave
-    - skypeforlinux
-    - paprefs
-    - pavucontrol
-    - cifs-utils
+  apt:
+    pkg:
+      - whois
+      - network-manager-openvpn
+      - smem
+      - inkscape
+      - postgresql
+      - postgresql-contrib
+      - postgresql-client
+      - octave
+    update_cache: yes
 
 
 - name: Check if slack is installed
@@ -74,9 +47,10 @@
     dest: "{{ item.destination }}"
     mode: 0777
   with_items:
-    - { url: "https://downloads.slack-edge.com/linux_releases/slack-desktop-3.1.1-amd64.deb", destination: "/tmp/slack.deb"}
+    - { url: "https://downloads.slack-edge.com/linux_releases/slack-desktop-3.3.7-amd64.deb", destination: "/tmp/slack.deb"}
     - { url: "https://dbeaver.jkiss.org/files/dbeaver-ce_latest_amd64.deb", destination: "/tmp/dbeaver.deb"}
-
+  when:
+    - dbeaver_installed.rc == 1 or slack_installed.rc == 1
 
 - name: Install Slack
   become: true
@@ -90,12 +64,6 @@
   apt:
     deb: "/tmp/dbeaver.deb"
   when: dbeaver_installed.rc == 1
-
-
-- name: Remove dependencies that are no longer required
-  become: true
-  apt:
-    autoremove: yes
 
 
 - name: Create required directories in $HOME
@@ -123,5 +91,7 @@
     - ".shrc.d"
 
 
-
-
+- name: Remove dependencies that are no longer required
+  become: true
+  apt:
+    autoremove: yes
