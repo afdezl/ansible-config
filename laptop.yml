@@ -7,4 +7,5 @@
     - python3.6
     - neovim
     - keepassxc
+    - docker
     - laptop
