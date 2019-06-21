@@ -48,7 +48,7 @@
     mode: 0777
   with_items:
     - { url: "https://downloads.slack-edge.com/linux_releases/slack-desktop-3.3.7-amd64.deb", destination: "/tmp/slack.deb"}
-    - { url: "https://dbeaver.jkiss.org/files/dbeaver-ce_latest_amd64.deb", destination: "/tmp/dbeaver.deb"}
+    - { url: "https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb", destination: "/tmp/dbeaver.deb"}
   when:
     - dbeaver_installed.rc == 1 or slack_installed.rc == 1
 
