@@ -4,8 +4,6 @@
   connection: local
   roles:
     - essential
-    - python3.6
     - neovim
-    - keepassxc
     - docker
     - laptop

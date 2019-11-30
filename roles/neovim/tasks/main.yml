@@ -9,18 +9,23 @@
 
 
 - name: Install neovim
+  become: true
   apt:
     pkg: neovim
     state: present
 
 
-- name: Create neovim/vim config
-  copy:
-    content: ""
-    dest: ~/.config/nvim/init.vim
-    force: no
-    mode: "u=rw,g=r,o=r"
+- name: Create required directories
+  file:
+    dest: ~/.config/nvim
+    mode: 0755
+    state: directory
 
+- name: Create required files
+  file:
+    dest: ~/.config/nvim/init.vim
+    mode: "u=rw,g=rw,o=r"
+    state: touch
 
 - name: Add NVim config
   lineinfile:

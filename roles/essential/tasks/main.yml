@@ -5,14 +5,11 @@
   apt:
     pkg:
       - apt-transport-https
-      - software-properties-common
       - curl
       - tree
       - tmux
       - git
       - htop
-      - python
-      - python-pip
       - xclip
       - jq
       - nmap

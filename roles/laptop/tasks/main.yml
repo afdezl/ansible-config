@@ -4,13 +4,6 @@
     name: dotfiles
 
 
-- name: Add repositories
-  become: true
-  apt_repository: repo={{ item }} state=present update_cache=yes
-  with_items:
-    - 'ppa:octave/stable'
-
-
 - name: Install apt packages
   become: true
   apt:
@@ -22,7 +15,6 @@
       - postgresql
       - postgresql-contrib
       - postgresql-client
-      - octave
     update_cache: yes
 
 
