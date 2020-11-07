@@ -3,9 +3,10 @@
 - hosts: localhost
   connection: local
   roles:
-    - essential
-    - python3.6
+#    - python3-versions
+    - utilities-base
+    - utilities-laptop
     - neovim
-    - keepassxc
     - docker
-    - laptop
+    - dotfiles
+    - dbeaver

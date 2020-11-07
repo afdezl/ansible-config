@@ -1,8 +1,11 @@
 ---
 
-- name: Install essential packages
+- name: Install base utilities
   become: true
   apt:
+    update_cache: yes
+    autoclean: yes
+    autoremove: yes
     pkg:
       - apt-transport-https
       - software-properties-common
@@ -11,8 +14,6 @@
       - tmux
       - git
       - htop
-      - python
-      - python-pip
       - xclip
       - jq
       - nmap
