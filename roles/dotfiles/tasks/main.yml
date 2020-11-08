@@ -6,3 +6,17 @@
   git:
     repo: https://github.com/afdezl/dotfiles.git
     dest: "/home/{{ user }}/dotfiles"
+
+
+- name: Create .bashrc config symlinks
+  file:
+    src: "/home/{{ user }}/dotfiles/{{ item }}"
+    dest: "/home/{{ user }}/{{ item }}"
+    state: link
+    force: yes
+    group: "{{ user }}"
+    owner: "{{ user }}"
+    mode: 0700
+  with_items:
+    - ".bashrc"
+    - ".shrc.d"

@@ -3,7 +3,7 @@
 - hosts: raspberry
   connection: ssh
   roles:
-    - essential
+    - utilities-base
     - dev
     - dotfiles
     - s3fs

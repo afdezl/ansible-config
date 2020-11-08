@@ -18,5 +18,5 @@
     - virtualenv
     - virtualenvwrapper
     - ipython
-    - awscli
+    - utilities-cloud
     - PyYaml

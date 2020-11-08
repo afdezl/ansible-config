@@ -1,0 +1,29 @@
+---
+
+- name: Install laptop specific utilities
+  become: true
+  apt:
+    pkg:
+      - wmctrl
+      - xdotool
+      - whois
+      - postgresql
+      - postgresql-contrib
+      - postgresql-client
+    state: present
+
+- name: Create required directories in $HOME
+  file:
+    path: "/home/{{ user }}/{{ item }}"
+    state: directory
+    group: "{{ user }}"
+    owner: "{{ user }}"
+    mode: 0700
+  with_items:
+    - "projects"
+    - "clients"
+
+- name: Remove dependencies that are no longer required
+  become: true
+  apt:
+    autoremove: yes

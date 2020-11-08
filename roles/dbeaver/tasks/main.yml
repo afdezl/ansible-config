@@ -1,0 +1,24 @@
+---
+
+- name: Check if dbeaver is installed
+  command: dpkg-query -W dbeaver
+  register: dbeaver_installed
+  failed_when: dbeaver_installed.rc > 1
+  changed_when: dbeaver_installed.rc == 1
+
+- name: Download remote packages
+  become: true
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ item.destination }}"
+    mode: 0777
+  with_items:
+    - { url: "https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb", destination: "/tmp/dbeaver.deb"}
+  when:
+    - dbeaver_installed.rc == 1
+
+- name: Install DBeaver
+  become: true
+  apt:
+    deb: "/tmp/dbeaver.deb"
+  when: dbeaver_installed.rc == 1
