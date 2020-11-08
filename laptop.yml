@@ -6,6 +6,7 @@
 #    - python3-versions
     - utilities-base
     - utilities-laptop
+    - utilities-cloud
     - neovim
     - docker
     - dotfiles

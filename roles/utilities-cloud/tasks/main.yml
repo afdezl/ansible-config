@@ -1,0 +1,15 @@
+---
+
+- name: Install global python packages at latest
+  pip:
+    name: ['awscli', 'azure-cli']
+    executable: pip3
+    extra_args: "--user"
+
+- name: Install k8s CLIs (Kubectl, Helm)
+  become: true
+  community.general.snap:
+    name:
+      - kubectl
+      - helm
+    classic: yes
