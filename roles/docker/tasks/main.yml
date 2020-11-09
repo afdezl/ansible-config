@@ -37,6 +37,10 @@
   register: get_download_name
   changed_when: false
 
+- name: Check if docker-compose installed
+  shell: docker-compose --version
+  register: docker_compose
+  changed_when: false
 
 - name: Download docker-compose
   become: true
@@ -46,6 +50,7 @@
     owner: root
     group: root
     mode: 0775
+  when: docker_compose.rc != 0
 
 
 - name: Install docker compose
@@ -53,3 +58,5 @@
   copy:
     src: /tmp/docker-compose
     dest: /usr/local/bin/docker-compose
+    mode: 0755
+  when: docker_compose.rc != 0
