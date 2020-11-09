@@ -1,7 +1,7 @@
 ---
 
-- name: Clone tfenv to /opt
+- name: Clone tfenv to ~/.tfenv
   become: true
   git:
     repo: https://github.com/tfutils/tfenv.git
-    dest: /opt/tfenv
+    dest:  "/home/{{ user }}/.tfenv"
