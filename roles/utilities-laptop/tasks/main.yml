@@ -8,6 +8,8 @@
       - xdotool
       - whois
       - filezilla
+      - clamav
+      - clamav-daemon
       - postgresql
       - postgresql-contrib
       - postgresql-client

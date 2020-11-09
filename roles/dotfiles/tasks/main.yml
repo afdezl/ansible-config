@@ -1,11 +1,15 @@
 ---
 
-# Download personal configuration dotfiles
+- name: Check if dotfiles exist
+  stat:
+    path: "/home/{{ user }}/dotfiles"
+  register: dotfiles_dir
 
 - name: Download dotfiles
   git:
     repo: https://github.com/afdezl/dotfiles.git
     dest: "/home/{{ user }}/dotfiles"
+  when: dotfiles_dir.stat.exists == false
 
 
 - name: Create .bashrc config symlinks
