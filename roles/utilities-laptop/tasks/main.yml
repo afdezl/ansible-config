@@ -26,6 +26,14 @@
     - "projects"
     - "clients"
 
+
+- name: Code editors
+  become: true
+  community.general.snap:
+    name:
+      - code
+    classic: yes
+
 - name: Remove dependencies that are no longer required
   become: true
   apt:
