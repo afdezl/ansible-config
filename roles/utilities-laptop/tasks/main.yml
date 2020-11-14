@@ -32,6 +32,7 @@
   community.general.snap:
     name:
       - code
+      - pycharm-professional
     classic: yes
 
 - name: Remove dependencies that are no longer required
