@@ -20,16 +20,8 @@
     path: ~/.config/nvim
     state: directory
 
-- name: Create neovim/vim config
-  copy:
-    content: ""
-    dest: ~/.config/nvim/init.vim
-    force: no
-    mode: "u=rw,g=r,o=r"
-
-- name: Add NVim config
-  lineinfile:
-    dest: ~/.config/nvim/init.vim
-    line: set guicursor=
-    state: present
-    create: yes
+- name: Create vimplug entry
+  get_url:
+    url: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+    dest: "/home/{{ user }}/.local/share/nvim/site/autoload/plug.vim"
+    mode: 0644

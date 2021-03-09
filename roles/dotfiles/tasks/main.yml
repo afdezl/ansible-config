@@ -25,3 +25,23 @@
     - ".bashrc"
     - ".shrc.d"
     - ".tmux.conf"
+
+- name: Create nvim config dir
+  file:
+    path: "/home/{{ user }}/.config/nvim"
+    state: directory
+    force: yes
+    group: "{{ user }}"
+    owner: "{{ user }}"
+    mode: 0755
+    
+- name: Create nvim config
+  file:
+    src: "/home/{{ user }}/dotfiles/.config/nvim/init.vim"
+    dest: "/home/{{ user }}/.config/nvim/init.vim"
+    state: link
+    force: yes
+    group: "{{ user }}"
+    owner: "{{ user }}"
+    mode: 0700
+    
