@@ -12,7 +12,7 @@
   when: dotfiles_dir.stat.exists == false
 
 
-- name: Create .bashrc config symlinks
+- name: Create config symlinks
   file:
     src: "/home/{{ user }}/dotfiles/{{ item }}"
     dest: "/home/{{ user }}/{{ item }}"
@@ -24,3 +24,4 @@
   with_items:
     - ".bashrc"
     - ".shrc.d"
+    - ".tmux.conf"
