@@ -18,4 +18,5 @@
       - jq
       - nmap
       - python3-pip
+      - python3-venv
     state: present
