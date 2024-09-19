@@ -1,7 +1,7 @@
 ---
 
 - name: Check if dbeaver is installed
-  command: dpkg-query -W dbeaver
+  command: dpkg-query -W dbeaver-ce
   register: dbeaver_installed
   failed_when: dbeaver_installed.rc > 1
   changed_when: dbeaver_installed.rc == 1

@@ -32,31 +32,3 @@
     state: present
 
 
-- name: Generate docker compose download name
-  shell: echo docker-compose-$(uname -s)-$(uname -m)
-  register: get_download_name
-  changed_when: false
-
-- name: Check if docker-compose installed
-  shell: docker-compose --version
-  register: docker_compose
-  changed_when: false
-
-- name: Download docker-compose
-  become: true
-  get_url:
-    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/{{ get_download_name.stdout }}"
-    dest: /tmp/docker-compose
-    owner: root
-    group: root
-    mode: 0775
-  when: docker_compose.rc != 0
-
-
-- name: Install docker compose
-  become: true
-  copy:
-    src: /tmp/docker-compose
-    dest: /usr/local/bin/docker-compose
-    mode: 0755
-  when: docker_compose.rc != 0

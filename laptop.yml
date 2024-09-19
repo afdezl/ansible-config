@@ -9,6 +9,6 @@
     - utilities-cloud
     - neovim
     - docker
-    - dotfiles
     - dbeaver
-    - tfenv
+    - dotfiles
+    - asdf

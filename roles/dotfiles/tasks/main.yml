@@ -44,4 +44,12 @@
     group: "{{ user }}"
     owner: "{{ user }}"
     mode: 0700
-    
+
+
+
+- name: Configure terminal settings
+  ansible.builtin.shell: 
+    cmd: "dconf load /org/gnome/terminal/ < /home/{{ user }}/dotfiles/gnome-terminal-settings.backup"
+  register: set_terminal_dconf_settings
+  failed_when: set_terminal_dconf_settings.rc > 1
+  changed_when: set_terminal_dconf_settings.rc != 0

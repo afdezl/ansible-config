@@ -14,10 +14,14 @@
     pkg: neovim
     state: present
 
-
 - name: Create neovim directory
   file:
     path: ~/.config/nvim
+    state: directory
+
+- name: Ensure vimplug path exists
+  file:
+    path: ~/.local/share/nvim/site/autoload
     state: directory
 
 - name: Create vimplug entry
