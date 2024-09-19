@@ -20,3 +20,26 @@
       - python3-pip
       - python3-venv
     state: present
+
+- name: Install dev utilities
+  become: true
+  apt:
+  update_cache: yes
+  autoclean: yes
+  autoremove: yes
+  pkg:
+    - make
+    - build-essential 
+    - libssl-dev 
+    - zlib1g-dev 
+    - libbz2-dev
+    - libreadline-dev 
+    - libsqlite3-dev 
+    - llvm 
+    - libncurses5-dev 
+    - libncursesw5-dev
+    - xz-utils 
+    - tk-dev 
+    - libffi-dev 
+    - liblzma-dev 
+    - python3-openssl
