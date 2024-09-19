@@ -30,7 +30,7 @@
   become: true
   community.general.snap:
     name:
-      - codium
+      - code
     classic: yes 
 
 - name: Remove dependencies that are no longer required
