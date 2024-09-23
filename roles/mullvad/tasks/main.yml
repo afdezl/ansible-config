@@ -1,0 +1,19 @@
+---
+- name: Add mullvad signing key
+  become: true
+  ansible.builtin.uri:
+    url: https://repository.mullvad.net/deb/mullvad-keyring.asc
+    dest: /usr/share/keyrings/mullvad-keyring.asc
+
+- name: Add mullvad repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/mullvad-keyring.asc] https://repository.mullvad.net/deb/stable {{ ansible_distribution_release }} main"
+    filename: mullvad-vpn
+
+- name: Install mullvad apt package
+  become: true
+  apt:
+    pkg:
+      - mullvad-vpn
+    update_cache: yes
