@@ -1,0 +1,31 @@
+---
+- name: Create clamtk history directory
+  ansible.builtin.file:
+    path: "{{ target_home }}/.clamtk/history"
+    state: directory
+    mode: "0755"
+
+- name: Install clamav packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - clamav
+      - clamav-daemon
+      - clamtk
+    state: present
+
+- name: Schedule nightly clamscan of home
+  ansible.builtin.cron:
+    name: clamtk-scan
+    minute: "{{ clamav_scan_minute }}"
+    hour: "{{ clamav_scan_hour }}"
+    job: >-
+      nice -n 6 /usr/bin/clamscan
+      --exclude-dir={{ target_home }}/.clamtk/viruses
+      --exclude-dir=smb4k
+      --exclude-dir=/run/user/{{ ansible_facts['user_uid'] }}/gvfs
+      --exclude-dir={{ target_home }}/.gvfs
+      --exclude-dir=.thunderbird --exclude-dir=.mozilla-thunderbird
+      --exclude-dir=.evolution --exclude-dir=Mail --exclude-dir=kmail
+      -i --detect-pua -r {{ target_home }}
+      --log="$HOME/.clamtk/history/$(date +\%b-\%d-\%Y).log" 2>/dev/null

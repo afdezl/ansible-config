@@ -1,6 +1,0 @@
----
-
-- name: Clone tfenv to ~/.tfenv
-  git:
-    repo: https://github.com/tfutils/tfenv.git
-    dest:  "/home/{{ user }}/.tfenv"

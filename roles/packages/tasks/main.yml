@@ -1,0 +1,48 @@
+---
+- name: Install apt packages
+  become: true
+  ansible.builtin.apt:
+    name: "{{ apt_cli_packages + apt_build_packages + apt_desktop_packages + apt_repo_packages }}"
+    state: present
+
+- name: Create deb cache directory
+  become: true
+  ansible.builtin.file:
+    path: /var/cache/ansible-debs
+    state: directory
+    mode: "0755"
+
+- name: Download standalone .deb packages
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ item.url }}"
+    dest: "/var/cache/ansible-debs/{{ item.name }}.deb"
+    mode: "0644"
+    force: false
+  loop: "{{ deb_downloads }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Install standalone .deb packages
+  become: true
+  ansible.builtin.apt:
+    deb: "/var/cache/ansible-debs/{{ item.name }}.deb"
+    state: present
+  loop: "{{ deb_downloads }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Install classic snaps
+  become: true
+  community.general.snap:
+    name: "{{ snap_classic }}"
+    classic: true
+    state: present
+  tags: [snap]
+
+- name: Install strict snaps
+  become: true
+  community.general.snap:
+    name: "{{ snap_strict }}"
+    state: present
+  tags: [snap]

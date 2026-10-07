@@ -1,0 +1,33 @@
+---
+- name: Download signing keys that are fetched separately
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ item.key_url }}"
+    dest: "{{ item.signed_by }}"
+    owner: root
+    group: root
+    mode: "0644"
+    force: false
+  loop: "{{ apt_repositories | selectattr('key_url', 'defined') | list }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Add third-party apt repositories (deb822)
+  become: true
+  ansible.builtin.deb822_repository:
+    name: "{{ item.name }}"
+    types: [deb]
+    uris: "{{ item.uris }}"
+    suites: "{{ item.suites }}"
+    components: ["{{ item.components }}"]
+    architectures: [amd64]
+    signed_by: "{{ item.signed_by }}"
+    state: present
+    enabled: true
+  loop: "{{ apt_repositories }}"
+  loop_control:
+    label: "{{ item.name }}"
+  notify: Refresh apt cache
+
+- name: Apply pending apt cache refresh before package installs
+  ansible.builtin.meta: flush_handlers

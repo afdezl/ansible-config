@@ -1,0 +1,288 @@
+---
+target_user: "{{ ansible_facts['user_id'] }}"
+target_home: "{{ ansible_facts['user_dir'] }}"
+
+home_dirs:
+  - Code
+  - Work
+
+apt_base_packages:
+  - ca-certificates
+  - cron
+  - curl
+  - git
+  - gnupg
+  - rsync
+  - software-properties-common
+  - unzip
+  - python3-apt
+  - python3-debian
+  - python3-psutil
+  - dconf-cli
+
+apt_cli_packages:
+  - btop
+  - cmake
+  - ffmpeg
+  - fzf
+  - htop
+  - jq
+  - net-tools
+  - nmap
+  - rclone
+  - tmux
+  - tree
+  - unrar
+  - whois
+  - xclip
+  - mysql-client-core
+  - neovim
+  - nodejs
+  - npm
+  - pipx
+  - python3-pip
+  - python3-tk
+  - python3-venv
+  - xvfb
+  - wireguard
+  - openvpn-systemd-resolved
+  - network-manager-openvpn-gnome
+
+apt_build_packages:
+  - build-essential
+  - make
+  - llvm
+  - libbz2-dev
+  - libffi-dev
+  - liblzma-dev
+  - libncurses-dev
+  - libreadline-dev
+  - libsqlite3-dev
+  - libssl-dev
+  - tk-dev
+  - zlib1g-dev
+  - libfuse2t64
+
+apt_desktop_packages:
+  - filezilla
+  - ptyxis
+  - gnome-shell-extension-manager
+  - gnome-shell-extensions
+  - gnome-tweaks
+  - remmina
+  - ubuntu-restricted-addons
+  - wmctrl
+  - xdotool
+  - tlp
+  - opensc
+
+apt_repo_packages:
+  - brave-browser
+  - mullvad-vpn
+  - slack-desktop
+  - dbeaver-ce
+  - terraform
+  - google-cloud-cli
+  - open-eid
+
+apt_repositories:
+  - name: docker
+    uris: https://download.docker.com/linux/ubuntu
+    suites: "{{ ansible_facts['distribution_release'] }}"
+    components: stable
+    signed_by: https://download.docker.com/linux/ubuntu/gpg
+  - name: brave-browser
+    uris: https://brave-browser-apt-release.s3.brave.com
+    suites: stable
+    components: main
+    signed_by: https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+  - name: mullvad-vpn
+    uris: https://repository.mullvad.net/deb/stable
+    suites: stable
+    components: main
+    signed_by: https://repository.mullvad.net/deb/mullvad-keyring.asc
+  - name: slack
+    uris: https://packagecloud.io/slacktechnologies/slack/debian/
+    suites: jessie
+    components: main
+    signed_by: https://packagecloud.io/slacktechnologies/slack/gpgkey
+  - name: hashicorp
+    uris: https://apt.releases.hashicorp.com
+    suites: "{{ ansible_facts['distribution_release'] }}"
+    components: main
+    signed_by: https://apt.releases.hashicorp.com/gpg
+  - name: google-cloud-sdk
+    uris: https://packages.cloud.google.com/apt
+    suites: cloud-sdk
+    components: main
+    signed_by: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+  - name: ria
+    uris: https://installer.id.ee/media/ubuntu/
+    suites: "{{ ansible_facts['distribution_release'] }}"
+    components: main
+    signed_by: https://installer.id.ee/media/install-scripts/C6C83D68.pub
+  - name: dbeaver-ce
+    uris: https://ppa.launchpadcontent.net/serge-rider/dbeaver-ce/ubuntu/
+    suites: "{{ ansible_facts['distribution_release'] }}"
+    components: main
+    signed_by: /etc/apt/keyrings/dbeaver-ce.asc
+    key_url: "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x30ECE32520D438C21E16BF884A71B51882788FD2"
+
+deb_downloads:
+  - name: google-chrome-stable
+    url: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+  - name: session-manager-plugin
+    url: https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb
+  - name: rustdesk
+    url: "https://github.com/rustdesk/rustdesk/releases/download/{{ rustdesk_version }}/rustdesk-{{ rustdesk_version }}-x86_64.deb"
+  - name: nono-cli
+    url: "https://github.com/nolabs-ai/nono/releases/download/v{{ nono_version }}/nono-cli_{{ nono_version }}_amd64.deb"
+
+rustdesk_version: "1.5.0"
+nono_version: "0.79.0"
+
+snap_classic:
+  - aws-cli
+  - code
+  - helm
+  - kubectl
+snap_strict:
+  - foliate
+  - spotify
+
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+docker_user_groups:
+  - docker
+  - kvm
+
+npm_prefix: "{{ target_home }}/.npm-global"
+npm_global_packages:
+  - "@earendil-works/pi-coding-agent"
+  - husky
+  - typescript
+
+pipx_packages:
+  - azure-cli
+
+user_installers:
+  - { name: uv, url: "https://astral.sh/uv/install.sh", creates: ".local/bin/uv" }
+  - { name: opencode, url: "https://opencode.ai/install", creates: ".opencode/bin/opencode" }
+  - { name: zed, url: "https://zed.dev/install.sh", creates: ".local/bin/zed" }
+
+vscode_extensions:
+  - continue.continue
+  - hashicorp.hcl
+  - hashicorp.terraform
+  - jakebecker.elixir-ls
+  - kilocode.kilo-code
+  - ms-azuretools.vscode-containers
+  - ms-azuretools.vscode-docker
+  - ms-python.debugpy
+  - ms-python.python
+  - ms-python.vscode-pylance
+  - ms-python.vscode-python-envs
+  - ms-toolsai.jupyter
+  - ms-toolsai.jupyter-keymap
+  - ms-toolsai.jupyter-renderers
+  - ms-toolsai.vscode-jupyter-cell-tags
+  - ms-toolsai.vscode-jupyter-slideshow
+  - ms-vscode-remote.remote-containers
+  - rooveterinaryinc.roo-cline
+  - saoudrizwan.claude-dev
+
+dotfiles_repo: https://github.com/afdezl/dotfiles.git
+dotfiles_version: master
+dotfiles_dir: "{{ target_home }}/dotfiles"
+dotfiles_links:
+  - { src: .bashrc, dest: .bashrc }
+  - { src: .shrc.d, dest: .shrc.d }
+  - { src: .tmux.conf, dest: .tmux.conf }
+  - { src: .config/nvim/init.vim, dest: .config/nvim/init.vim }
+
+clamav_scan_hour: "1"
+clamav_scan_minute: "44"
+
+dconf_settings:
+  - { key: /org/gnome/desktop/interface/accent-color, value: "'slate'" }
+  - { key: /org/gnome/desktop/interface/color-scheme, value: "'default'" }
+  - { key: /org/gnome/desktop/interface/font-name, value: "'Ubuntu Sans 11'" }
+  - { key: /org/gnome/desktop/interface/gtk-enable-primary-paste, value: "true" }
+  - { key: /org/gnome/desktop/interface/gtk-theme, value: "'Yaru-sage'" }
+  - { key: /org/gnome/desktop/interface/icon-theme, value: "'Yaru-sage'" }
+  - { key: /org/gnome/desktop/interface/show-battery-percentage, value: "true" }
+  - { key: /org/gnome/desktop/input-sources/sources, value: "[('xkb', 'gb')]" }
+  - { key: /org/gnome/desktop/peripherals/keyboard/numlock-state, value: "true" }
+  - { key: /org/gnome/desktop/peripherals/mouse/natural-scroll, value: "false" }
+  - { key: /org/gnome/desktop/peripherals/mouse/speed, value: "0.62962962962962954" }
+  - { key: /org/gnome/desktop/peripherals/touchpad/click-method, value: "'fingers'" }
+  - { key: /org/gnome/desktop/peripherals/touchpad/edge-scrolling-enabled, value: "false" }
+  - { key: /org/gnome/desktop/peripherals/touchpad/natural-scroll, value: "false" }
+  - { key: /org/gnome/desktop/peripherals/touchpad/speed, value: "0.23076923076923084" }
+  - { key: /org/gnome/desktop/peripherals/touchpad/two-finger-scrolling-enabled, value: "true" }
+  - { key: /org/gnome/desktop/session/idle-delay, value: "uint32 0" }
+  - { key: /org/gnome/desktop/screensaver/lock-delay, value: "uint32 300" }
+  - { key: /org/gnome/desktop/privacy/report-technical-problems, value: "false" }
+  - { key: /org/gnome/mutter/edge-tiling, value: "false" }
+  - { key: /org/gnome/mutter/keybindings/toggle-tiled-left, value: "@as []" }
+  - { key: /org/gnome/mutter/keybindings/toggle-tiled-right, value: "@as []" }
+  - { key: /org/gnome/settings-daemon/plugins/power/idle-dim, value: "false" }
+  - { key: /org/gnome/settings-daemon/plugins/power/sleep-inactive-ac-timeout, value: "3600" }
+  - { key: /org/gnome/settings-daemon/plugins/power/sleep-inactive-ac-type, value: "'nothing'" }
+  - { key: /org/gnome/settings-daemon/plugins/power/sleep-inactive-battery-timeout, value: "3600" }
+  - { key: /org/gnome/settings-daemon/plugins/power/sleep-inactive-battery-type, value: "'suspend'" }
+  - { key: /org/gnome/shell/enabled-extensions, value: "['tiling-assistant@ubuntu.com', 'ubuntu-dock@ubuntu.com', 'ding@rastersoft.com', 'ubuntu-appindicators@ubuntu.com']" }
+  - { key: /org/gnome/shell/favorite-apps, value: "['firefox_firefox.desktop', 'org.gnome.Nautilus.desktop', 'slack.desktop', 'code_code.desktop', 'org.gnome.Terminal.desktop', 'update-manager.desktop', 'spotify_spotify.desktop']" }
+  - { key: /org/gnome/shell/extensions/dash-to-dock/dash-max-icon-size, value: "20" }
+  - { key: /org/gnome/shell/extensions/dash-to-dock/dock-position, value: "'BOTTOM'" }
+  - { key: /org/gnome/shell/extensions/dash-to-dock/extend-height, value: "true" }
+  - { key: /org/gnome/shell/extensions/tiling-assistant/focus-hint-color, value: "'rgb(203,67,20)'" }
+  - { key: /org/gnome/shell/extensions/tiling-assistant/tiling-popup-all-workspace, value: "true" }
+  - { key: /org/gnome/nautilus/preferences/default-folder-viewer, value: "'list-view'" }
+  - { key: /org/gnome/nautilus/preferences/search-filter-time-type, value: "'last_modified'" }
+
+ptyxis_profile_uuid: 4a1c9d2e7b3f4e6a8c5d0f1b2a3e4d5c
+ptyxis_palette_name: Adrian
+ptyxis_palette:
+  foreground: "#e1e6dc"
+  background: "#191c1e"
+  cursor: "#e1e6dc"
+  colors:
+    - "#2e3436"
+    - "#cc0000"
+    - "#4e9a06"
+    - "#c4a000"
+    - "#3465a4"
+    - "#75507b"
+    - "#06989a"
+    - "#d3d7cf"
+    - "#555753"
+    - "#ef2929"
+    - "#8ae234"
+    - "#fce94f"
+    - "#729fcf"
+    - "#ad7fa8"
+    - "#34e2e2"
+    - "#eeeeec"
+ptyxis_dconf_settings:
+  - { key: /org/gnome/Ptyxis/profile-uuids, value: "['{{ ptyxis_profile_uuid }}']" }
+  - { key: /org/gnome/Ptyxis/default-profile-uuid, value: "'{{ ptyxis_profile_uuid }}'" }
+  - { key: /org/gnome/Ptyxis/audible-bell, value: "false" }
+  - { key: /org/gnome/Ptyxis/visual-bell, value: "true" }
+  - { key: /org/gnome/Ptyxis/default-columns, value: "uint32 160" }
+  - { key: /org/gnome/Ptyxis/default-rows, value: "uint32 40" }
+  - { key: /org/gnome/Ptyxis/restore-window-size, value: "false" }
+  - { key: /org/gnome/Ptyxis/font-name, value: "'Monospace 9'" }
+  - { key: /org/gnome/Ptyxis/use-system-font, value: "false" }
+  - { key: /org/gnome/Ptyxis/scrollbar-policy, value: "'never'" }
+  - { key: "/org/gnome/Ptyxis/Profiles/{{ ptyxis_profile_uuid }}/label", value: "'Adrian'" }
+  - { key: "/org/gnome/Ptyxis/Profiles/{{ ptyxis_profile_uuid }}/palette", value: "'{{ ptyxis_palette_name }}'" }
+  - { key: "/org/gnome/Ptyxis/Profiles/{{ ptyxis_profile_uuid }}/opacity", value: "1.0" }
+  - { key: "/org/gnome/Ptyxis/Profiles/{{ ptyxis_profile_uuid }}/bold-is-bright", value: "true" }
+  - { key: "/org/gnome/Ptyxis/Profiles/{{ ptyxis_profile_uuid }}/login-shell", value: "false" }
+  - { key: "/org/gnome/Ptyxis/Profiles/{{ ptyxis_profile_uuid }}/use-custom-command", value: "true" }
+  - { key: "/org/gnome/Ptyxis/Profiles/{{ ptyxis_profile_uuid }}/custom-command", value: "'tmux'" }

@@ -1,0 +1,23 @@
+---
+- name: Create Ptyxis palette directory
+  ansible.builtin.file:
+    path: "{{ target_home }}/.local/share/org.gnome.Ptyxis/palettes"
+    state: directory
+    mode: "0755"
+
+- name: Install custom Ptyxis palette
+  ansible.builtin.template:
+    src: palette.j2
+    dest: "{{ target_home }}/.local/share/org.gnome.Ptyxis/palettes/{{ ptyxis_palette_name }}.palette"
+    mode: "0644"
+
+- name: Apply Ptyxis settings
+  community.general.dconf:
+    key: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+  loop: "{{ ptyxis_dconf_settings }}"
+  loop_control:
+    label: "{{ item.key }}"
+  environment:
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ ansible_facts['user_uid'] }}/bus"

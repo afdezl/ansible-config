@@ -1,0 +1,11 @@
+---
+- name: Apply GNOME settings
+  community.general.dconf:
+    key: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+  loop: "{{ dconf_settings }}"
+  loop_control:
+    label: "{{ item.key }}"
+  environment:
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ ansible_facts['user_uid'] }}/bus"

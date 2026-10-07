@@ -1,0 +1,50 @@
+---
+- name: Create user bin directory
+  ansible.builtin.file:
+    path: "{{ target_home }}/.local/bin"
+    state: directory
+    mode: "0755"
+
+- name: Install user-level tools via upstream installers
+  ansible.builtin.include_tasks: installer.yml
+  loop: "{{ user_installers }}"
+  loop_control:
+    loop_var: installer
+    label: "{{ installer.name }}"
+
+- name: Install pipx packages
+  community.general.pipx:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ pipx_packages }}"
+  environment:
+    PATH: "{{ target_home }}/.local/bin:{{ ansible_facts['env']['PATH'] }}"
+
+- name: Create npm global prefix
+  ansible.builtin.file:
+    path: "{{ npm_prefix }}"
+    state: directory
+    mode: "0755"
+
+- name: Install npm global packages
+  community.general.npm:
+    name: "{{ item }}"
+    global: true
+    state: present
+  loop: "{{ npm_global_packages }}"
+  environment:
+    NPM_CONFIG_PREFIX: "{{ npm_prefix }}"
+
+- name: List installed VS Code extensions
+  ansible.builtin.command: /snap/bin/code --list-extensions
+  register: user_tools_vscode_installed
+  changed_when: false
+  failed_when: false
+  tags: [vscode]
+
+- name: Install VS Code extensions
+  ansible.builtin.command: "/snap/bin/code --install-extension {{ item }}"
+  loop: "{{ vscode_extensions | difference(user_tools_vscode_installed.stdout_lines | map('lower') | list) }}"
+  when: user_tools_vscode_installed.rc == 0
+  changed_when: true
+  tags: [vscode]

@@ -1,0 +1,29 @@
+---
+- name: Configure laptop
+  hosts: "{{ target | default('localhost') }}"
+  vars_prompt:
+    - name: git_default_identity_name
+      prompt: Git default identity name
+      private: no
+    - name: git_default_identity_email
+      prompt: Git default identity email
+      private: no
+  roles:
+    - role: base
+      tags: [base]
+    - role: apt_repos
+      tags: [apt_repos]
+    - role: packages
+      tags: [packages]
+    - role: docker
+      tags: [docker]
+    - role: clamav
+      tags: [clamav]
+    - role: user_tools
+      tags: [user_tools]
+    - role: dotfiles
+      tags: [dotfiles]
+    - role: gnome
+      tags: [gnome]
+    - role: ptyxis
+      tags: [ptyxis]

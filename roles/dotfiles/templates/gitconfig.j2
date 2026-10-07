@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+[core]
+	editor = vim
+[user]
+	name = {{ git_default_identity_name }}
+	email = {{ git_default_identity_email }}
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	allowedSignersFile = {{ target_home }}/.ssh/allowed_signers
+[alias]
+	lb = for-each-ref --sort=-committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'
+

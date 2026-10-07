@@ -1,55 +1,52 @@
 ---
+- name: Clone dotfiles repository
+  ansible.builtin.git:
+    repo: "{{ dotfiles_repo }}"
+    dest: "{{ dotfiles_dir }}"
+    update: false
+    version: "{{ dotfiles_version }}"
 
-- name: Check if dotfiles exist
-  stat:
-    path: "/home/{{ user }}/dotfiles"
-  register: dotfiles_dir
-
-- name: Download dotfiles
-  git:
-    repo: https://github.com/afdezl/dotfiles.git
-    dest: "/home/{{ user }}/dotfiles"
-  when: dotfiles_dir.stat.exists == false
-
-
-- name: Create config symlinks
-  file:
-    src: "/home/{{ user }}/dotfiles/{{ item }}"
-    dest: "/home/{{ user }}/{{ item }}"
-    state: link
-    force: yes
-    group: "{{ user }}"
-    owner: "{{ user }}"
-    mode: 0700
-  with_items:
-    - ".bashrc"
-    - ".shrc.d"
-    - ".tmux.conf"
-
-- name: Create nvim config dir
-  file:
-    path: "/home/{{ user }}/.config/nvim"
+- name: Ensure parent directories for links exist
+  ansible.builtin.file:
+    path: "{{ (target_home ~ '/' ~ item.dest) | dirname }}"
     state: directory
-    force: yes
-    group: "{{ user }}"
-    owner: "{{ user }}"
-    mode: 0755
-    
-- name: Create nvim config
-  file:
-    src: "/home/{{ user }}/dotfiles/.config/nvim/init.vim"
-    dest: "/home/{{ user }}/.config/nvim/init.vim"
+    mode: "0755"
+  loop: "{{ dotfiles_links }}"
+  loop_control:
+    label: "{{ item.dest }}"
+
+- name: Link dotfiles into home
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/{{ item.src }}"
+    dest: "{{ target_home }}/{{ item.dest }}"
     state: link
-    force: yes
-    group: "{{ user }}"
-    owner: "{{ user }}"
-    mode: 0700
+    force: true
+  loop: "{{ dotfiles_links }}"
+  loop_control:
+    label: "{{ item.dest }}"
 
+- name: Render main gitconfig
+  ansible.builtin.template:
+    src: gitconfig.j2
+    dest: "{{ target_home }}/.gitconfig"
+    mode: "0644"
 
+- name: Ensure vim-plug autoload directory exists
+  ansible.builtin.file:
+    path: "{{ target_home }}/.local/share/nvim/site/autoload"
+    state: directory
+    mode: "0755"
 
-- name: Configure terminal settings
-  ansible.builtin.shell: 
-    cmd: "dconf load /org/gnome/terminal/ < /home/{{ user }}/dotfiles/gnome-terminal-settings.backup"
-  register: set_terminal_dconf_settings
-  failed_when: set_terminal_dconf_settings.rc > 1
-  changed_when: set_terminal_dconf_settings.rc != 0
+- name: Install vim-plug
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    dest: "{{ target_home }}/.local/share/nvim/site/autoload/plug.vim"
+    mode: "0644"
+    force: false
+
+- name: Install neovim plugins
+  ansible.builtin.command:
+    cmd: nvim --headless +PlugInstall +qa
+    creates: "{{ target_home }}/.local/share/nvim/plugged/csv.vim"
+  environment:
+    HOME: "{{ target_home }}"

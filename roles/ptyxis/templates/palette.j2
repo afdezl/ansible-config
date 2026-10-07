@@ -1,0 +1,13 @@
+[Palette]
+Name={{ ptyxis_palette_name }}
+
+{% for section in ['Light', 'Dark'] %}
+[{{ section }}]
+Foreground={{ ptyxis_palette.foreground }}
+Background={{ ptyxis_palette.background }}
+Cursor={{ ptyxis_palette.cursor }}
+{% for c in ptyxis_palette.colors %}
+Color{{ loop.index0 }}={{ c }}
+{% endfor %}
+
+{% endfor %}

@@ -1,0 +1,21 @@
+---
+- name: Check for installed tool
+  ansible.builtin.stat:
+    path: "{{ target_home }}/{{ installer.creates }}"
+  register: user_tools_installer_present
+
+- name: Install tool from upstream installer
+  when: not user_tools_installer_present.stat.exists
+  block:
+    - name: Download installer script
+      ansible.builtin.get_url:
+        url: "{{ installer.url }}"
+        dest: "/tmp/{{ installer.name }}-install.sh"
+        mode: "0700"
+
+    - name: Run installer script
+      ansible.builtin.command:
+        cmd: "/bin/bash /tmp/{{ installer.name }}-install.sh"
+        creates: "{{ target_home }}/{{ installer.creates }}"
+      environment:
+        UV_NO_MODIFY_PATH: "1"

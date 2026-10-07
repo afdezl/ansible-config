@@ -1,9 +1,0 @@
----
-
-- hosts: raspberry
-  connection: ssh
-  roles:
-    - utilities-base
-    - dev
-    - dotfiles
-    - s3fs

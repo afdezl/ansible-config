@@ -1,0 +1,130 @@
+---
+# Push configuration from the OLD machine to the new one:
+#   ansible-playbook migrate.yml   (prompts for both sudo passwords)
+# Limit to groups with: -e sync_groups=credentials,opencode
+# Groups: credentials opencode vscode small dbeaver clitools vpn history. Wi-Fi: --tags wifi
+# Idempotent: re-running transfers only differences.
+
+- name: Collect Wi-Fi connection profiles from this machine
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: true
+  tags: [wifi]
+  vars_prompt:
+    - name: local_become_pass
+      prompt: "sudo password for THIS machine"
+      private: true
+  vars:
+    ansible_become_password: "{{ local_become_pass }}"
+  tasks:
+    - name: Find Wi-Fi NetworkManager profiles
+      ansible.builtin.find:
+        paths: /etc/NetworkManager/system-connections
+        patterns: "*.nmconnection"
+        contains: '^type=wifi'
+      register: wifi_profiles
+
+    - name: Read Wi-Fi profiles into memory
+      ansible.builtin.slurp:
+        src: "{{ item.path }}"
+      loop: "{{ wifi_profiles.files }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+      register: wifi_profile_data
+      no_log: true
+
+- name: Transfer configuration to the new machine
+  hosts: newlaptop
+  vars_prompt:
+    - name: remote_become_pass
+      prompt: "sudo password for the NEW machine"
+      private: true
+  vars:
+    ansible_become_password: "{{ remote_become_pass }}"
+    source_home: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+    sync_groups: all
+    sync_items:
+      - { path: .ssh, group: credentials, excludes: ["authorized_keys"] }
+      - { path: .gnupg, group: credentials, excludes: ["S.*", "*.lock", "random_seed"] }
+      - { path: .aws, group: credentials }
+      - { path: .azure, group: credentials, excludes: ["commands", "logs", "telemetry", "cliextensions"] }
+      - { path: .docker/config.json, group: credentials }
+      - { path: .npmrc, group: credentials }
+
+      - { path: .config/opencode, group: opencode, excludes: ["node_modules", "*.bak"] }
+      - { path: .config/nono, group: opencode }
+      - { path: .agents, group: opencode }
+      - { path: .local/share/opencode, group: opencode, excludes: ["bin", "log", "snapshot", "tool-output", "*.db-shm", "*.db-wal"] }
+
+      - { path: .config/Code/User/settings.json, group: vscode }
+      - { path: .config/Code/User/keybindings.json, group: vscode }
+      - { path: .config/Code/User/snippets, group: vscode }
+
+      - { path: .config/btop, group: small }
+      - { path: .config/htop, group: small }
+      - { path: .config/mimeapps.list, group: small }
+      - { path: .config/user-dirs.dirs, group: small }
+      - { path: .config/cdshort, group: small }
+
+      - { path: .local/share/DBeaverData, group: dbeaver }
+
+      - { path: .config/gcloud, group: clitools, excludes: ["logs"] }
+      - { path: .config/rclone, group: clitools }
+      - { path: .config/remmina, group: clitools }
+      - { path: .local/share/remmina, group: clitools }
+      - { path: .config/zed, group: clitools }
+
+      - { path: ".config/Mullvad VPN", group: vpn }
+      - { path: .config/rustdesk, group: vpn }
+
+      - { path: .bash_history, group: history }
+      - { path: .zsh_history, group: history }
+      - { path: .python_history, group: history }
+  tasks:
+    - name: Resolve groups to transfer
+      ansible.builtin.set_fact:
+        active_groups: "{{ (sync_items | map(attribute='group') | unique | list) if sync_groups == 'all' else (sync_groups | split(',')) }}"
+      tags: [always]
+
+    - name: Create parent directories for transferred paths
+      ansible.builtin.file:
+        path: "{{ (ansible_facts['user_dir'] ~ '/' ~ item.path) | dirname }}"
+        state: directory
+        mode: "0755"
+      loop: "{{ sync_items | selectattr('group', 'in', active_groups) | list }}"
+      loop_control:
+        label: "{{ item.path }}"
+
+    - name: Push files from the old machine
+      ansible.posix.synchronize:
+        src: "{{ source_home }}/{{ item.path }}"
+        dest: "{{ (ansible_facts['user_dir'] ~ '/' ~ item.path) | dirname }}/"
+        archive: true
+        owner: false
+        group: false
+        rsync_opts: "{{ (item.excludes | default([])) | map('regex_replace', '^', '--exclude=') | list }}"
+      loop: "{{ sync_items | selectattr('group', 'in', active_groups) | list }}"
+      loop_control:
+        label: "{{ item.path }}"
+
+    - name: Install Wi-Fi connection profiles
+      become: true
+      ansible.builtin.copy:
+        content: "{{ item.content | b64decode }}"
+        dest: "/etc/NetworkManager/system-connections/{{ item.source | basename }}"
+        owner: root
+        group: root
+        mode: "0600"
+      loop: "{{ hostvars['localhost'].wifi_profile_data.results }}"
+      loop_control:
+        label: "{{ item.source | basename }}"
+      no_log: true
+      notify: Reload NetworkManager
+      tags: [wifi]
+
+  handlers:
+    - name: Reload NetworkManager
+      become: true
+      ansible.builtin.command: nmcli connection reload
+      changed_when: true
