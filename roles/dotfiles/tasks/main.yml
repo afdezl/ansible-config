@@ -6,6 +6,14 @@
     update: false
     version: "{{ dotfiles_version }}"
 
+- name: Rewrite GitHub HTTPS remotes to SSH
+  ansible.builtin.command:
+    cmd: "git -C {{ item.path }} remote set-url {{ item.remote | default('origin') }} {{ item.url | regex_replace('https://github.com/', 'git@github.com:') }}"
+  loop:
+    - { path: "{{ dotfiles_dir }}", url: "{{ dotfiles_repo }}" }
+    - { path: "{{ playbook_dir }}", url: "https://github.com/afdezl/ansible-config.git" }
+  changed_when: false
+
 - name: Ensure parent directories for links exist
   ansible.builtin.file:
     path: "{{ (target_home ~ '/' ~ item.dest) | dirname }}"
